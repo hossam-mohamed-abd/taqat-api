@@ -48,15 +48,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-app.use(async (_req, _res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
 
+
+await connectDB();
 // Add Routes
 app.use('/api/auth', authRouter);
 app.use('/api/main', mainRouter);
