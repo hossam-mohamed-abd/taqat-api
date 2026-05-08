@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
-import session from "express-session";
 
 import connectDB from "./DB/mongoose.js";
 
@@ -20,14 +19,12 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const isProduction = process.env.NODE_ENV === "production";
-
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim())
   : ["http://localhost:5173"];
 
 
-// CONNECT DATABASE
+// DATABASE
 connectDB();
 
 
@@ -37,7 +34,6 @@ app.use(
     origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   })
 );
 
@@ -49,20 +45,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // LOGGER
 app.use(morgan("dev"));
-
-
-// SESSION
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-    },
-  })
-);
 
 
 // ROUTES
